@@ -12,4 +12,4 @@ class BorrowerStatus(Enum):
     ACTIVE = 0
     INACTIVE = 1
     DELINQUENT = 2
-    MINOR = 3
+ 

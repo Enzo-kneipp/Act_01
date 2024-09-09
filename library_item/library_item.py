@@ -1,4 +1,4 @@
-"""
+""""
 Description: This file is what defines the LibraryItem class, which represents an item in the libraryclass on its own.
 Author: Enzo Kneipp
 date:sep/06
@@ -43,12 +43,12 @@ class LibraryItem:
         if not isinstance(is_borrowed, bool):
             raise ValueError("Is Borrowed must be a boolean value.")
         
-    """ self.__title = title.strip()
+        self.__title = title.strip()
         self.__author = author.strip()
         self.__genre = genre
         self.__item_id = item_id
         self.__is_borrowed = is_borrowed
-        """
+        
     @property
     def title(self):
         """Returns the title of the library item."""

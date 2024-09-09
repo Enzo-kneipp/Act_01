@@ -4,78 +4,102 @@ Author: Enzo Kneipp
 Date:sep/06
 """
 
-from borrower_status.borrower_status import BorrowerStatus
+from email_validator import validate_email, EmailNotValidError
+from borrower_status import BorrowerStatus
 
 class LibraryUser:
     """
-    Represents a user of the library system.
+    Represents a user of the library.
 
     Attributes:
-        user_id (int): The unique user ID.
-        name (str): The name of the user.
-        email (str): The email address of the user.
-        borrower_status (BorrowerStatus): The status of the borrower (ACTIVE, DELINQUENT, etc.).
+        user_id (int): The unique user id value of the library user.
+        name (str): The name of the library user.
+        email (str): The email address of the library user.
+        borrower_status (BorrowerStatus): The current status of the library user.
     """
 
     def __init__(self, user_id: int, name: str, email: str, borrower_status: BorrowerStatus):
         """
-        Initializes a LibraryUser object with the given user ID, name, email, and borrower status.
+        Initializes a new instance of the LibraryUser class.
 
         Args:
-            user_id (int): The unique user ID.
-            name (str): The name of the user.
-            email (str): The email address of the user.
-            borrower_status (BorrowerStatus): The current status of the borrower.
+            user_id (int): The unique user id value of the library user.
+            name (str): The name of the library user.
+            email (str): The email address of the library user.
+            borrower_status (BorrowerStatus): The current status of the library user.
 
         Raises:
-            ValueError: If user_id is not an integer, is less than 100, if name is blank, if the email is invalid,
-                        or if borrower_status is not a valid BorrowerStatus.
+            ValueError: If the user_id is not an integer or less than 100, name is blank, email is invalid, or borrower_status is invalid.
         """
         if not isinstance(user_id, int):
             raise ValueError("User Id must be numeric.")
         if user_id <= 99:
             raise ValueError("Invalid User Id.")
-        if not name.strip():
+        self.__user_id = user_id
+
+        if len(name.strip()) == 0:
             raise ValueError("Name cannot be blank.")
-        if "@" not in email or "." not in email:
+        self.__name = name
+
+        try:
+            validate_email(email)
+        except EmailNotValidError:
             raise ValueError("Invalid email address.")
+        self.__email = email
+
         if not isinstance(borrower_status, BorrowerStatus):
             raise ValueError("Invalid Borrower Status.")
-
-        self.__user_id = user_id
-        self.__name = name
-        self.__email = email
         self.__borrower_status = borrower_status
 
     @property
-    def user_id(self):
-        """Returns the user's ID."""
+    def user_id(self) -> int:
+        """
+        Gets the user id of the library user.
+
+        Returns:
+            int: The user id of the library user.
+        """
         return self.__user_id
 
     @property
-    def name(self):
-        """Returns the user's name."""
+    def name(self) -> str:
+        """
+        Gets the name of the library user.
+
+        Returns:
+            str: The name of the library user.
+        """
         return self.__name
 
     @property
-    def email(self):
-        """Returns the user's email address."""
+    def email(self) -> str:
+        """
+        Gets the email address of the library user.
+
+        Returns:
+            str: The email address of the library user.
+        """
         return self.__email
 
     @property
-    def borrower_status(self):
-        """Returns the user's borrower status."""
+    def borrower_status(self) -> BorrowerStatus:
+        """
+        Gets the borrower status of the library user.
+
+        Returns:
+            BorrowerStatus: The current status of the library user.
+        """
         return self.__borrower_status
 
     def borrow_item(self) -> str:
         """
-        Checks if the user is eligible to borrow an item based on their borrower status.
+        Determines if the user can borrow an item.
 
         Returns:
-            str: A message indicating the borrowing eligibility.
+            str: A message indicating whether the user can borrow an item.
 
         Raises:
-            Exception: If the user's borrower status is DELINQUENT.
+            Exception: If the user cannot borrow an item due to their status.
         """
         if self.__borrower_status == BorrowerStatus.DELINQUENT:
             raise Exception(f"{self.__name} cannot borrow an item due to their {self.__borrower_status.name} status.")
@@ -83,10 +107,10 @@ class LibraryUser:
 
     def return_item(self) -> str:
         """
-        Handles the return of an item and updates the user's borrower status if necessary.
+        Processes the return of an item by the user.
 
         Returns:
-            str: A message indicating the return status.
+            str: A message indicating the result of the return process.
         """
         if self.__borrower_status == BorrowerStatus.DELINQUENT:
             self.__borrower_status = BorrowerStatus.ACTIVE
